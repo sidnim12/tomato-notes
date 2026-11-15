@@ -1,0 +1,22 @@
+{
+  "name": "tempo-pomodoro-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest",
+    "lucide-react": "latest",
+    "framer-motion": "latest"
+  },
+  "devDependencies": {}
+}
