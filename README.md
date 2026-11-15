@@ -31,7 +31,8 @@ The result combines the usefulness of a Pomodoro timer with the personality of a
 - **Automatic break page** that turns the notebook page and begins a five-minute break
 - **Honest session ledger** for completed and interrupted sessions
 - **Daily fresh page** while previous records remain available for weekly calculations
-- **Private IndexedDB storage** with no account or remote database required
+- **Supabase authentication and cloud sync** protected with row-level security
+- **Private issue reporting** visible only to approved developer accounts
 - **Weekly rhythm chart** built with Recharts
 - **Light and dark themes** with separate, carefully tuned accent systems
 - **Notebook-style navigation** with functional Focus, Journal, and Rhythm tabs
@@ -50,7 +51,7 @@ The result combines the usefulness of a Pomodoro timer with the personality of a
 | Animation | Framer Motion |
 | Charts | Recharts |
 | Icons | Lucide React |
-| Local database | IndexedDB |
+| Authentication and database | Supabase Auth + PostgreSQL |
 | Hosting | Vercel |
 
 ## Run locally
@@ -65,6 +66,29 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
+
+## Configure Supabase
+
+1. Create a Supabase project and open its SQL Editor.
+2. Run [`supabase/schema.sql`](./supabase/schema.sql) to create the session table and row-level security policies.
+3. Copy `.env.example` to `.env.local`.
+4. Add your project URL and public anon key:
+
+```env
+VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+VITE_SUPABASE_ANON_KEY=YOUR_PUBLIC_ANON_KEY
+```
+
+Only use the public anon key in the frontend. Never expose a secret or service-role key.
+
+After creating your own account, promote it to the private developer desk from the Supabase SQL Editor:
+
+```sql
+insert into public.developer_members (user_id)
+select id from auth.users where email = 'YOUR_EMAIL';
+```
+
+Add teammates later by running the same query with their confirmed account email. Regular users can submit private reports but cannot list or read any reports. Approved developers can review reports, update their status, and open sanitized GitHub issues from the developer desk.
 
 ## Production build
 
@@ -87,16 +111,18 @@ Import this repository from the [Vercel dashboard](https://vercel.com/new) and u
 | Build command | `npm run build` |
 | Output directory | `dist` |
 
+Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` under **Project Settings → Environment Variables** before deploying.
+
 The included [`vercel.json`](./vercel.json) sends application routes back to `index.html`, keeping the single-page experience compatible with direct navigation.
 
 ## How data is handled
 
-Tomato Notes stores focus history in the browser's IndexedDB database. Data stays on the current browser and device; it is not sent to a server.
+Tomato Notes stores focus history in Supabase PostgreSQL. Email/password authentication identifies each user, and PostgreSQL row-level security ensures users can only access their own records.
 
 - The Journal displays entries from the current day.
 - The Rhythm view uses saved history for the rolling seven-day chart.
 - Opening the app on a new day produces a clean daily page without deleting earlier history.
-- Clearing browser site data removes the saved journal.
+- Auth sessions persist securely through the Supabase client and work across devices.
 
 ## Project structure
 
@@ -115,7 +141,7 @@ tomato-notes/
 
 ## Privacy note
 
-This project does not require an account and does not transmit journal entries. Each browser and device maintains its own independent history.
+This project requires an account so focus history can sync across devices. The browser receives only the public Supabase anon key; database row-level security protects every user's records. Never expose a Supabase secret or service-role key in the frontend.
 
 ## Contributing
 
