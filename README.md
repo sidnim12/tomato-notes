@@ -32,7 +32,9 @@ The result combines the usefulness of a Pomodoro timer with the personality of a
 - **Honest session ledger** for completed and interrupted sessions
 - **Daily fresh page** while previous records remain available for weekly calculations
 - **Supabase authentication and cloud sync** protected with row-level security
+- **Account menu** with profile details, avatar uploads, password recovery, and sign-out
 - **Private issue reporting** visible only to approved developer accounts
+- **GitHub issue handoff** with sanitized drafts and saved issue links for developers
 - **Weekly rhythm chart** built with Recharts
 - **Light and dark themes** with separate, carefully tuned accent systems
 - **Notebook-style navigation** with functional Focus, Journal, and Rhythm tabs
@@ -70,7 +72,7 @@ Open [http://localhost:5173](http://localhost:5173).
 ## Configure Supabase
 
 1. Create a Supabase project and open its SQL Editor.
-2. Run [`supabase/schema.sql`](./supabase/schema.sql) to create the session table and row-level security policies.
+2. Run [`supabase/schema.sql`](./supabase/schema.sql) to create the tables, row-level security policies, and the protected avatar bucket. Re-run it after pulling schema updates; it is idempotent.
 3. Copy `.env.example` to `.env.local`.
 4. Add your project URL and public anon key:
 
@@ -88,7 +90,7 @@ insert into public.developer_members (user_id)
 select id from auth.users where email = 'YOUR_EMAIL';
 ```
 
-Add teammates later by running the same query with their confirmed account email. Regular users can submit private reports but cannot list or read any reports. Approved developers can review reports, update their status, and open sanitized GitHub issues from the developer desk.
+Add teammates later by running the same query with their confirmed account email. Regular users can submit private reports but cannot list or read any reports. Approved developers can review reports, update their status, open sanitized GitHub drafts, and attach the final public issue URL from the developer desk. Reports are never published automatically because GitHub Issues in this public repository are public.
 
 ## Production build
 
